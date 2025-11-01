@@ -1765,7 +1765,7 @@ if __name__ == "__main__":
     with tab5:
         st.subheader("📖 Panduan Penggunaan")
         
-        st.markdown("
+        st.markdown("""
         ### Cara Menggunakan SEO Traffic Booster:
         
         1. **Konfigurasi Dasar**:
@@ -1801,7 +1801,7 @@ if __name__ == "__main__":
         - Success rate traffic
         - Sumber traffic
         - Aktivitas pengguna
-        ")
+        """)
 
     # Logika kontrol bot - PERBAIKAN: Handle progress dengan benar
     if start_btn and not st.session_state.bot.is_running:
