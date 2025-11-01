@@ -120,6 +120,10 @@ def main():
         st.session_state.leak_results = []
     if 'activity_log' not in st.session_state:
         st.session_state.activity_log = []
+    if 'current_progress' not in st.session_state:
+        st.session_state.current_progress = 0
+    if 'current_cycle' not in st.session_state:
+        st.session_state.current_cycle = 0
     
     # Sidebar untuk konfigurasi
     with st.sidebar:
@@ -154,6 +158,8 @@ def main():
             st.session_state.bot = SEOBot()
             st.session_state.leak_results = []
             st.session_state.activity_log = []
+            st.session_state.current_progress = 0
+            st.session_state.current_cycle = 0
             st.rerun()
 
     # Area utama untuk monitoring
@@ -174,12 +180,20 @@ def main():
         success_rate = "85%" if st.session_state.bot.session_data['total_visits'] > 0 else "0%"
         st.metric("Success Rate", success_rate)
 
-    # Progress section
+    # Progress section - PERBAIKAN: Gunakan placeholder yang aman
     if st.session_state.bot.is_running:
         st.subheader("📊 Progress Simulasi")
-        progress_bar = st.progress(0)
+        
+        # Progress bar dengan nilai yang valid
+        current_progress = st.session_state.current_progress
+        if current_progress > 1.0:
+            current_progress = 1.0
+        elif current_progress < 0.0:
+            current_progress = 0.0
+            
+        progress_bar = st.progress(current_progress)
         status_text = st.empty()
-        current_cycle = st.empty()
+        current_cycle_display = st.empty()
 
     # Tab untuk berbagai fitur
     tab1, tab2, tab3, tab4, tab5 = st.tabs(["📊 Dashboard", "🔍 Cek Kebocoran", "📝 Log Aktivitas", "📈 Analytics", "⚙️ Panduan"])
@@ -222,11 +236,11 @@ def main():
             # Traffic simulation
             st.subheader("Simulasi Traffic")
             if st.session_state.bot.session_data['total_visits'] > 0:
-                traffic_data = {
-                    'Waktu': [f'Cycle {i+1}' for i in range(st.session_state.bot.session_data['total_visits'])],
-                    'Kunjungan': [1] * st.session_state.bot.session_data['total_visits']
-                }
-                st.line_chart(traffic_data['Kunjungan'])
+                traffic_data = pd.DataFrame({
+                    'Cycle': range(1, st.session_state.bot.session_data['total_visits'] + 1),
+                    'Visits': [1] * st.session_state.bot.session_data['total_visits']
+                })
+                st.line_chart(traffic_data.set_index('Cycle'))
 
     with tab2:
         st.subheader("🔍 Hasil Cek Kebocoran Data")
@@ -263,6 +277,172 @@ def main():
             for log in reversed(st.session_state.activity_log[-20:]):
                 log_type = "🟢" if "success" in log['message'].lower() or "berhasil" in log['message'].lower() else "🟡"
                 st.write(f"{log_type} `{log['timestamp']}` - {log['message']}")
+        else:
+            st.info("Belum ada aktivitas yang tercatat")
+
+    with tab4:
+        st.subheader("📈 Analytics")
+        
+        if st.session_state.bot.session_data['total_visits'] > 0:
+            col1, col2, col3 = st.columns(3)
+            
+            with col1:
+                total_visits = st.session_state.bot.session_data['total_visits']
+                st.metric("Total Visits", total_visits)
+            
+            with col2:
+                unique_keywords = len(set(st.session_state.bot.session_data['keywords_used']))
+                st.metric("Unique Keywords", unique_keywords)
+            
+            with col3:
+                avg_visits_per_keyword = total_visits / max(unique_keywords, 1)
+                st.metric("Avg Visits/Keyword", f"{avg_visits_per_keyword:.1f}")
+            
+            # Traffic source simulation
+            st.subheader("Sumber Traffic (Simulasi)")
+            traffic_sources = {
+                'Organic Search': random.randint(40, 70),
+                'Direct': random.randint(20, 40),
+                'Referral': random.randint(10, 30),
+                'Social': random.randint(5, 15)
+            }
+            
+            source_df = pd.DataFrame({
+                'Source': list(traffic_sources.keys()),
+                'Percentage': list(traffic_sources.values())
+            })
+            
+            st.dataframe(source_df, use_container_width=True)
+            st.bar_chart(source_df.set_index('Source'))
+            
+        else:
+            st.info("Jalankan simulasi terlebih dahulu untuk melihat analytics")
+
+    with tab5:
+        st.subheader("📖 Panduan Penggunaan")
+        
+        st.markdown("""
+        ### Cara Menggunakan SEO Traffic Booster:
+        
+        1. **Konfigurasi Dasar**:
+           - Masukkan kata kunci target untuk pencarian
+           - Masukkan domain website target
+           - Atur jumlah siklus dan delay
+        
+        2. **Fitur Keamanan**:
+           - Gunakan proxy server untuk anonimitas
+           - Cek kebocoran data email
+           - Monitor semua aktivitas
+        
+        3. **Jalankan Simulasi**:
+           - Klik "Mulai Simulasi" untuk memulai
+           - Monitor progress di dashboard
+           - Lihat analytics secara real-time
+        
+        4. **Fitur yang Tersedia**:
+           - ✅ Simulasi traffic organik
+           - ✅ Cek kebocoran data
+           - ✅ Monitoring real-time
+           - ✅ Analytics lengkap
+           - ✅ Log aktivitas detail
+        
+        ### Catatan untuk Streamlit Share:
+        - Beberapa fitur automation browser tidak tersedia
+        - Aplikasi berjalan dalam mode simulasi
+        - Data bersifat sementara (akan reset setelah redeploy)
+        
+        ### Metrik yang Dimonitor:
+        - Total kunjungan website
+        - Kata kunci yang digunakan
+        - Success rate traffic
+        - Sumber traffic
+        - Aktivitas pengguna
+        """)
+
+    # Logika kontrol bot - PERBAIKAN: Handle progress dengan benar
+    if start_btn and not st.session_state.bot.is_running:
+        if not keyword or not target_website:
+            st.error("Harap isi kata kunci dan website target!")
+            return
+        
+        config = {
+            'use_proxy': use_proxy,
+            'keyword': keyword,
+            'target_website': target_website,
+            'cycles': cycles,
+            'delay': delay_between_cycles
+        }
+        
+        st.session_state.bot.is_running = True
+        st.session_state.bot.session_data['start_time'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        st.session_state.current_progress = 0
+        st.session_state.current_cycle = 0
+        
+        # Jalankan bot dalam thread terpisah
+        def run_bot():
+            for i in range(cycles):
+                if not st.session_state.bot.is_running:
+                    break
+                
+                # PERBAIKAN: Update progress dengan nilai yang valid
+                st.session_state.current_cycle = i + 1
+                progress_value = (i + 1) / cycles
+                
+                # Pastikan progress antara 0.0 dan 1.0
+                if progress_value > 1.0:
+                    progress_value = 1.0
+                elif progress_value < 0.0:
+                    progress_value = 0.0
+                    
+                st.session_state.current_progress = progress_value
+                
+                # Jalankan siklus bot
+                success = st.session_state.bot.simulate_traffic_cycle(config)
+                
+                # Log aktivitas
+                log_entry = {
+                    'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                    'message': f"Siklus {i + 1}: {'Berhasil' if success else 'Gagal'} - Keyword: {keyword} -> {target_website}"
+                }
+                st.session_state.activity_log.append(log_entry)
+                
+                # Delay sebelum siklus berikutnya
+                if i < cycles - 1 and st.session_state.bot.is_running:
+                    time.sleep(delay_between_cycles)
+            
+            st.session_state.bot.is_running = False
+            st.session_state.current_progress = 1.0  # Selesai
+        
+        # Jalankan thread
+        import threading
+        thread = threading.Thread(target=run_bot, daemon=True)
+        thread.start()
+        
+        st.rerun()
+    
+    if stop_btn and st.session_state.bot.is_running:
+        st.session_state.bot.is_running = False
+        st.success("Simulasi dihentikan!")
+        st.rerun()
+
+    # PERBAIKAN: Tampilkan progress secara real-time
+    if st.session_state.bot.is_running:
+        st.info(f"🔄 Sedang berjalan: Siklus {st.session_state.current_cycle}/{cycles}")
+        
+        # Update progress bar jika sedang running
+        progress_placeholder = st.empty()
+        with progress_placeholder.container():
+            current_progress = st.session_state.current_progress
+            if current_progress > 1.0:
+                current_progress = 1.0
+            st.progress(current_progress)
+            
+        # Auto-refresh setiap 2 detik saat running
+        time.sleep(2)
+        st.rerun()
+
+if __name__ == "__main__":
+    main()p']}` - {log['message']}")
         else:
             st.info("Belum ada aktivitas yang tercatat")
 
