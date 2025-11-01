@@ -474,7 +474,7 @@ def main():
     # Warning box
     st.markdown("""
     <div class="warning-box">
-        <strong>⚠️ Disclaimer:</strong> Aplikasi ini adalah simulator untuk tujuan edukasi. 
+        <strong> Disclaimer:</strong> Aplikasi ini adalah simulator untuk tujuan edukasi. 
         Beberapa fitur seperti automation browser tidak tersedia di Streamlit Share karena batasan keamanan.
     </div>
     """, unsafe_allow_html=True)
