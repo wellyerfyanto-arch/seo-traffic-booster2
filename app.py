@@ -697,11 +697,11 @@ def main():
            - Lihat analytics secara real-time
         
         4. **Fitur yang Tersedia**:
-           - ✅ Simulasi traffic organik
-           - ✅ Cek kebocoran data
-           - ✅ Monitoring real-time
-           - ✅ Analytics lengkap
-           - ✅ Log aktivitas detail
+           -  Simulasi traffic organik
+           -  Cek kebocoran data
+           -  Monitoring real-time
+           -  Analytics lengkap
+           -  Log aktivitas detail
         
         ### Catatan untuk Streamlit Share:
         - Beberapa fitur automation browser tidak tersedia
@@ -979,7 +979,7 @@ def main():
     # Warning box
     st.markdown("""
     <div class="warning-box">
-        <strong>⚠️ Disclaimer:</strong> Aplikasi ini adalah simulator untuk tujuan edukasi. 
+        <strong> Disclaimer:</strong> Aplikasi ini adalah simulator untuk tujuan edukasi. 
         Beberapa fitur seperti automation browser tidak tersedia di Streamlit Share karena batasan keamanan.
     </div>
     """, unsafe_allow_html=True)
@@ -1202,11 +1202,11 @@ def main():
            - Lihat analytics secara real-time
         
         4. **Fitur yang Tersedia**:
-           - ✅ Simulasi traffic organik
-           - ✅ Cek kebocoran data
-           - ✅ Monitoring real-time
-           - ✅ Analytics lengkap
-           - ✅ Log aktivitas detail
+           -  Simulasi traffic organik
+           -  Cek kebocoran data
+           -  Monitoring real-time
+           -  Analytics lengkap
+           -  Log aktivitas detail
         
         ### Catatan untuk Streamlit Share:
         - Beberapa fitur automation browser tidak tersedia
