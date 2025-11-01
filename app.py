@@ -409,14 +409,7 @@ def main():
 
 if __name__ == "__main__":
     main()   
-<style>
-    .warning-box {
-        background-color: #fff3cd;
-        border-radius: 5;
-        padding: 1;
-        margin: 1 0;
-    }
-</style>
+
 """, unsafe_allow_html=True)
 
 class SEOBot:
