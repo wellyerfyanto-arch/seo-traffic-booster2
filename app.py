@@ -454,7 +454,7 @@ class SEOBot:
         }
     
     def check_data_leak(self, email):
-        "Simulasi cek kebocoran data"""
+        """Simulasi cek kebocoran data"""
         try:
             # Simulasi cek kebocoran data
             leak_indicators = ['password', 'username', 'email', 'phone']
