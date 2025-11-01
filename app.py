@@ -409,17 +409,38 @@ def main():
 
 if __name__ == "__main__":
     main()    
+# CSS kustom
+st.markdown("""
+<style>
+    .main-header {
+        font-size: 2.5rem;
+        color: #1f77b4;
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+    .metric-card {
+        background-color: #f0f2f6;
+        padding: 1rem;
+        border-radius: 10px;
+        margin: 0.5rem 0;
+    }
+    .status-running {
+        color: #28a745;
+        font-weight: bold;
+    }
     .status-stopped {
         color: #dc3545;
         font-weight: bold;
     }
     .warning-box {
         background-color: #fff3cd;
+        border: 1px solid #ffeaa7;
         border-radius: 5px;
         padding: 1rem;
         margin: 1rem 0;
     }
 </style>
+""", unsafe_allow_html=True)
 """, unsafe_allow_html=True)
 
 class SEOBot:
