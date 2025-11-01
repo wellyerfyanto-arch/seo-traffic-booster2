@@ -479,6 +479,511 @@ class SEOBot:
             return {'has_leak': False, 'error': str(e)}
     
     def simulate_traffic_cycle(self, config):
+        """Simulasi siklus traffic boosting"""
+        try:
+            # Simulasi delay
+            time.sleep(2)
+            
+            # Update session data
+            self.session_data['total_visits'] += 1
+            self.session_data['keywords_used'].append(config['keyword'])
+            self.session_data['last_activity'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            
+            # Simulasi success rate 85%
+            return random.random() < 0.85
+            
+        except Exception as e:
+            st.error(f"Error in traffic cycle: {str(e)}")
+            return False
+
+def main():
+    st.markdown('<h1 class="main-header">🚀 SEO Traffic Booster</h1>', unsafe_allow_html=True)
+    
+    # Warning box
+    st.markdown("""
+    <div class="warning-box">
+        <strong> Disclaimer:</strong> Aplikasi ini adalah simulator untuk tujuan edukasi. 
+        Beberapa fitur seperti automation browser tidak tersedia di Streamlit Share karena batasan keamanan.
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Inisialisasi session state
+    if 'bot' not in st.session_state:
+        st.session_state.bot = SEOBot()
+    if 'leak_results' not in st.session_state:
+        st.session_state.leak_results = []
+    if 'activity_log' not in st.session_state:
+        st.session_state.activity_log = []
+    if 'current_progress' not in st.session_state:
+        st.session_state.current_progress = 0
+    if 'current_cycle' not in st.session_state:
+        st.session_state.current_cycle = 0
+    if 'total_cycles' not in st.session_state:
+        st.session_state.total_cycles = 0
+    
+    # Sidebar untuk konfigurasi
+    with st.sidebar:
+        st.header("⚙️ Konfigurasi")
+        
+        # Input proxy (simulasi)
+        use_proxy = st.checkbox("Gunakan Proxy (Simulasi)")
+        if use_proxy:
+            proxy_options = ["US Proxy Server", "EU Proxy Server", "Asia Proxy Server", "Random Proxy"]
+            selected_proxy = st.selectbox("Pilih Proxy Server", proxy_options)
+        
+        # Input email untuk cek kebocoran
+        email = st.text_input("Email untuk Cek Kebocoran Data", placeholder="user@example.com")
+        
+        # Keyword dan target website
+        keyword = st.text_input("Kata Kunci Pencarian", placeholder="teknologi terbaru 2024")
+        target_website = st.text_input("Website Target", placeholder="example.com")
+        
+        # Pengaturan bot
+        cycles = st.number_input("Jumlah Siklus", min_value=1,    }
+    .warning-box {
+        background-color: #fff3cd;
+        border: 1px solid #ffeaa7;
+        border-radius: 5px;
+        padding: 1rem;
+        margin: 1rem 0;
+    }
+</style>
+""", unsafe_allow_html=True)
+
+class SEOBot:
+    def __init__(self):
+        self.is_running = False
+        self.session_data = {
+            'total_visits': 0,
+            'keywords_used': [],
+            'start_time': None,
+            'last_activity': None
+        }
+    
+    def check_data_leak(self, email):
+        """Simulasi cek kebocoran data"""
+        try:
+            # Simulasi cek kebocoran data
+            leak_indicators = ['password', 'username', 'email', 'phone']
+            has_leak = random.choice([True, False, False])
+            
+            if has_leak:
+                leaked_data = random.sample(leak_indicators, random.randint(1, 2))
+                return {
+                    'has_leak': True,
+                    'leaked_info': leaked_data,
+                    'severity': random.choice(['low', 'medium', 'high']),
+                    'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                }
+            else:
+                return {
+                    'has_leak': False,
+                    'leaked_info': [],
+                    'severity': 'none',
+                    'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                }
+        except Exception as e:
+            return {'has_leak': False, 'error': str(e)}
+    
+    def simulate_traffic_cycle(self, config):
+        """Simulasi siklus traffic boosting"""
+        try:
+            time.sleep(2)
+            
+            self.session_data['total_visits'] += 1
+            self.session_data['keywords_used'].append(config['keyword'])
+            self.session_data['last_activity'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            
+            return random.random() < 0.85
+            
+        except Exception as e:
+            st.error(f"Error in traffic cycle: {str(e)}")
+            return False
+
+def main():
+    st.markdown('<h1 class="main-header">🚀 SEO Traffic Booster</h1>', unsafe_allow_html=True)
+    
+    # Warning box
+    st.markdown("""
+    <div class="warning-box">
+        <strong>⚠️ Disclaimer:</strong> Aplikasi ini adalah simulator untuk tujuan edukasi. 
+        Beberapa fitur seperti automation browser tidak tersedia di Streamlit Share karena batasan keamanan.
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Inisialisasi session state
+    if 'bot' not in st.session_state:
+        st.session_state.bot = SEOBot()
+    if 'leak_results' not in st.session_state:
+        st.session_state.leak_results = []
+    if 'activity_log' not in st.session_state:
+        st.session_state.activity_log = []
+    if 'current_progress' not in st.session_state:
+        st.session_state.current_progress = 0
+    if 'current_cycle' not in st.session_state:
+        st.session_state.current_cycle = 0
+    if 'total_cycles' not in st.session_state:
+        st.session_state.total_cycles = 0
+    
+    # Sidebar untuk konfigurasi
+    with st.sidebar:
+        st.header("⚙️ Konfigurasi")
+        
+        use_proxy = st.checkbox("Gunakan Proxy (Simulasi)")
+        if use_proxy:
+            proxy_options = ["US Proxy Server", "EU Proxy Server", "Asia Proxy Server", "Random Proxy"]
+            selected_proxy = st.selectbox("Pilih Proxy Server", proxy_options)
+        
+        email = st.text_input("Email untuk Cek Kebocoran Data", placeholder="user@example.com")
+        
+        keyword = st.text_input("Kata Kunci Pencarian", placeholder="teknologi terbaru 2024")
+        target_website = st.text_input("Website Target", placeholder="example.com")
+        
+        cycles = st.number_input("Jumlah Siklus", min_value=1, max_value=50, value=10)
+        delay_between_cycles = st.number_input("Delay antar Siklus (detik)", min_value=5, max_value=60, value=15)
+        
+        col1, col2 = st.columns(2)
+        with col1:
+            start_btn = st.button("🚀 Mulai Simulasi", type="primary", use_container_width=True)
+        with col2:
+            stop_btn = st.button("⏹️ Berhenti", type="secondary", use_container_width=True)
+        
+        if st.button("🔄 Reset Data", use_container_width=True):
+            st.session_state.bot = SEOBot()
+            st.session_state.leak_results = []
+            st.session_state.activity_log = []
+            st.session_state.current_progress = 0
+            st.session_state.current_cycle = 0
+            st.session_state.total_cycles = 0
+            st.rerun()
+
+    # Area utama untuk monitoring
+    col1, col2, col3, col4 = st.columns(4)
+    
+    with col1:
+        st.metric("Total Kunjungan", st.session_state.bot.session_data['total_visits'])
+    
+    with col2:
+        status = "Running" if st.session_state.bot.is_running else "Stopped"
+        st.metric("Status", status)
+    
+    with col3:
+        last_activity = st.session_state.bot.session_data.get('last_activity', 'Belum ada')
+        st.metric("Aktivitas Terakhir", last_activity)
+    
+    with col4:
+        success_rate = "85%" if st.session_state.bot.session_data['total_visits'] > 0 else "0%"
+        st.metric("Success Rate", success_rate)
+
+    # Progress section
+    if st.session_state.bot.is_running:
+        st.subheader("📊 Progress Simulasi")
+        
+        current_progress = st.session_state.current_progress
+        if current_progress > 1.0:
+            current_progress = 1.0
+        elif current_progress < 0.0:
+            current_progress = 0.0
+            
+        st.progress(current_progress)
+        st.info(f"🔄 Sedang berjalan: Siklus {st.session_state.current_cycle}/{st.session_state.total_cycles}")
+
+    # Tab untuk berbagai fitur
+    tab1, tab2, tab3, tab4, tab5 = st.tabs(["📊 Dashboard", "🔍 Cek Kebocoran", "📝 Log Aktivitas", "📈 Analytics", "⚙️ Panduan"])
+
+    with tab1:
+        st.subheader("Dashboard Monitoring")
+        
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.subheader("Kata Kunci yang Digunakan")
+            if st.session_state.bot.session_data['keywords_used']:
+                keyword_df = pd.DataFrame({
+                    'Keyword': st.session_state.bot.session_data['keywords_used'],
+                    'Count': [1] * len(st.session_state.bot.session_data['keywords_used'])
+                })
+                keyword_summary = keyword_df.groupby('Keyword').count().reset_index()
+                st.dataframe(keyword_summary, use_container_width=True)
+                
+                if len(keyword_summary) > 0:
+                    st.bar_chart(keyword_summary.set_index('Keyword'))
+            else:
+                st.info("Belum ada kata kunci yang digunakan")
+        
+        with col2:
+            st.subheader("Statistik Sesi")
+            session_stats = {
+                'Metrik': ['Total Kunjungan', 'Waktu Mulai', 'Aktivitas Terakhir', 'Kata Kunci Unik'],
+                'Nilai': [
+                    st.session_state.bot.session_data['total_visits'],
+                    st.session_state.bot.session_data.get('start_time', 'Belum dimulai'),
+                    st.session_state.bot.session_data.get('last_activity', 'Belum ada'),
+                    len(set(st.session_state.bot.session_data['keywords_used']))
+                ]
+            }
+            st.dataframe(session_stats, use_container_width=True)
+            
+            st.subheader("Simulasi Traffic")
+            if st.session_state.bot.session_data['total_visits'] > 0:
+                traffic_data = pd.DataFrame({
+                    'Cycle': range(1, st.session_state.bot.session_data['total_visits'] + 1),
+                    'Visits': [1] * st.session_state.bot.session_data['total_visits']
+                })
+                st.line_chart(traffic_data.set_index('Cycle'))
+
+    with tab2:
+        st.subheader("🔍 Hasil Cek Kebocoran Data")
+        
+        if email and st.button("Cek Kebocoran Data"):
+            with st.spinner("Memeriksa kebocoran data..."):
+                time.sleep(2)
+                result = st.session_state.bot.check_data_leak(email)
+                st.session_state.leak_results.append(result)
+                st.rerun()
+        
+        if st.session_state.leak_results:
+            for i, result in enumerate(st.session_state.leak_results[-5:], 1):
+                st.write("---")
+                if result.get('has_leak'):
+                    st.error(f"🔓 Kebocoran Terdeteksi #{i}")
+                    st.write(f"**Tingkat Keparahan:** {result.get('severity', 'unknown').upper()}")
+                    st.write(f"**Informasi Bocor:** {', '.join(result.get('leaked_info', []))}")
+                    st.write(f"**Waktu:** {result.get('timestamp', 'Unknown')}")
+                else:
+                    st.success(f"🔒 Aman #{i} - Tidak ada kebocoran terdeteksi")
+                    st.write(f"**Waktu:** {result.get('timestamp', 'Unknown')}")
+        else:
+            st.info("Masukkan email dan klik 'Cek Kebocoran Data' untuk memulai")
+
+    with tab3:
+        st.subheader("📝 Log Aktivitas")
+        
+        if st.button("Bersihkan Log"):
+            st.session_state.activity_log = []
+            st.rerun()
+            
+        if st.session_state.activity_log:
+            for log in reversed(st.session_state.activity_log[-20:]):
+                log_type = "🟢" if "success" in log['message'].lower() or "berhasil" in log['message'].lower() else "🟡"
+                st.write(f"{log_type} `{log['timestamp']}` - {log['message']}")
+        else:
+            st.info("Belum ada aktivitas yang tercatat")
+
+    with tab4:
+        st.subheader("📈 Analytics")
+        
+        if st.session_state.bot.session_data['total_visits'] > 0:
+            col1, col2, col3 = st.columns(3)
+            
+            with col1:
+                total_visits = st.session_state.bot.session_data['total_visits']
+                st.metric("Total Visits", total_visits)
+            
+            with col2:
+                unique_keywords = len(set(st.session_state.bot.session_data['keywords_used']))
+                st.metric("Unique Keywords", unique_keywords)
+            
+            with col3:
+                avg_visits_per_keyword = total_visits / max(unique_keywords, 1)
+                st.metric("Avg Visits/Keyword", f"{avg_visits_per_keyword:.1f}")
+            
+            st.subheader("Sumber Traffic (Simulasi)")
+            traffic_sources = {
+                'Organic Search': random.randint(40, 70),
+                'Direct': random.randint(20, 40),
+                'Referral': random.randint(10, 30),
+                'Social': random.randint(5, 15)
+            }
+            
+            source_df = pd.DataFrame({
+                'Source': list(traffic_sources.keys()),
+                'Percentage': list(traffic_sources.values())
+            })
+            
+            st.dataframe(source_df, use_container_width=True)
+            st.bar_chart(source_df.set_index('Source'))
+            
+        else:
+            st.info("Jalankan simulasi terlebih dahulu untuk melihat analytics")
+
+    with tab5:
+        st.subheader("📖 Panduan Penggunaan")
+        
+        st.markdown("""
+        ### Cara Menggunakan SEO Traffic Booster:
+        
+        1. **Konfigurasi Dasar**:
+           - Masukkan kata kunci target untuk pencarian
+           - Masukkan domain website target
+           - Atur jumlah siklus dan delay
+        
+        2. **Fitur Keamanan**:
+           - Gunakan proxy server untuk anonimitas
+           - Cek kebocoran data email
+           - Monitor semua aktivitas
+        
+        3. **Jalankan Simulasi**:
+           - Klik "Mulai Simulasi" untuk memulai
+           - Monitor progress di dashboard
+           - Lihat analytics secara real-time
+        
+        4. **Fitur yang Tersedia**:
+           - ✅ Simulasi traffic organik
+           - ✅ Cek kebocoran data
+           - ✅ Monitoring real-time
+           - ✅ Analytics lengkap
+           - ✅ Log aktivitas detail
+        
+        ### Catatan untuk Streamlit Share:
+        - Beberapa fitur automation browser tidak tersedia
+        - Aplikasi berjalan dalam mode simulasi
+        - Data bersifat sementara (akan reset setelah redeploy)
+        
+        ### Metrik yang Dimonitor:
+        - Total kunjungan website
+        - Kata kunci yang digunakan
+        - Success rate traffic
+        - Sumber traffic
+        - Aktivitas pengguna
+        """)
+
+    # Logika kontrol bot
+    if start_btn and not st.session_state.bot.is_running:
+        if not keyword or not target_website:
+            st.error("Harap isi kata kunci dan website target!")
+            return
+        
+        config = {
+            'use_proxy': use_proxy,
+            'keyword': keyword,
+            'target_website': target_website,
+            'cycles': cycles,
+            'delay': delay_between_cycles
+        }
+        
+        st.session_state.bot.is_running = True
+        st.session_state.bot.session_data['start_time'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        st.session_state.current_progress = 0
+        st.session_state.current_cycle = 0
+        st.session_state.total_cycles = cycles
+        
+        def run_bot():
+            for i in range(cycles):
+                if not st.session_state.bot.is_running:
+                    break
+                
+                st.session_state.current_cycle = i + 1
+                progress_value = (i + 1) / cycles
+                
+                if progress_value > 1.0:
+                    progress_value = 1.0
+                elif progress_value < 0.0:
+                    progress_value = 0.0
+                    
+                st.session_state.current_progress = progress_value
+                
+                success = st.session_state.bot.simulate_traffic_cycle(config)
+                
+                log_entry = {
+                    'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                    'message': f"Siklus {i + 1}: {'Berhasil' if success else 'Gagal'} - Keyword: {keyword} -> {target_website}"
+                }
+                st.session_state.activity_log.append(log_entry)
+                
+                if i < cycles - 1 and st.session_state.bot.is_running:
+                    time.sleep(delay_between_cycles)
+            
+            st.session_state.bot.is_running = False
+            st.session_state.current_progress = 1.0
+        
+        thread = threading.Thread(target=run_bot, daemon=True)
+        thread.start()
+        
+        st.rerun()
+    
+    if stop_btn and st.session_state.bot.is_running:
+        st.session_state.bot.is_running = False
+        st.success("Simulasi dihentikan!")
+        st.rerun()
+
+    # Auto-refresh saat running
+    if st.session_state.bot.is_running:
+        time.sleep(1)
+        st.rerun()
+
+if __name__ == "__main__":
+    main()    
+# CSS kustom
+st.markdown("""
+<style>
+    .main-header {
+        font-size: 2.5rem;
+        color: #1f77b4;
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+    .metric-card {
+        background-color: #f0f2f6;
+        padding: 1rem;
+        border-radius: 10px;
+        margin: 0.5rem 0;
+    }
+    .status-running {
+        color: #28a745;
+        font-weight: bold;
+    }
+    .status-stopped {
+        color: #dc3545;
+        font-weight: bold;
+    }
+    .warning-box {
+        background-color: #fff3cd;
+        border: 1px solid #ffeaa7;
+        border-radius: 5px;
+        padding: 1rem;
+        margin: 1rem 0;
+    }
+</style>
+""", unsafe_allow_html=True)
+""", unsafe_allow_html=True)
+
+class SEOBot:
+    def __init__(self):
+        self.is_running = False
+        self.session_data = {
+            'total_visits': 0,
+            'keywords_used': [],
+            'start_time': None,
+            'last_activity': None
+        }
+    
+    def check_data_leak(self, email):
+        """Simulasi cek kebocoran data"""
+        try:
+            # Simulasi cek kebocoran data
+            leak_indicators = ['password', 'username', 'email', 'phone']
+            has_leak = random.choice([True, False, False])  # 33% chance leak
+            
+            if has_leak:
+                leaked_data = random.sample(leak_indicators, random.randint(1, 2))
+                return {
+                    'has_leak': True,
+                    'leaked_info': leaked_data,
+                    'severity': random.choice(['low', 'medium', 'high']),
+                    'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                }
+            else:
+                return {
+                    'has_leak': False,
+                    'leaked_info': [],
+                    'severity': 'none',
+                    'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                }
+        except Exception as e:
+            return {'has_leak': False, 'error': str(e)}
+    
+    def simulate_traffic_cycle(self, config):
         "Simulasi siklus traffic boosting"""
         try:
             # Simulasi delay
