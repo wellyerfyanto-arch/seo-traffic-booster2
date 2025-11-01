@@ -448,7 +448,7 @@ class SEOBot:
             return {'has_leak': False, 'error': str(e)}
     
     def simulate_traffic_cycle(self, config):
-        """Simulasi siklus traffic boosting"""
+        "Simulasi siklus traffic boosting"
         try:
             time.sleep(2)
             
