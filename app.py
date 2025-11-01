@@ -408,8 +408,9 @@ def main():
         st.rerun()
 
 if __name__ == "__main__":
-    main()    
-    warning-box 
+    main()   
+<style>
+    .warning-box {
         background-color: #fff3cd;
         border-radius: 5;
         padding: 1;
