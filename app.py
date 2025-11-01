@@ -1378,8 +1378,8 @@ def main():
     <div class="warning-box">
         <strong> Disclaimer:</strong> Aplikasi ini adalah simulator untuk tujuan edukasi. 
         Beberapa fitur seperti automation browser tidak tersedia di Streamlit Share karena batasan keamanan.
-    </div>"
-    , unsafe_allow_html=True)
+    </div>
+    , unsafe_allow_html=True")
     
     # Inisialisasi session state
     if 'bot' not in st.session_state:
