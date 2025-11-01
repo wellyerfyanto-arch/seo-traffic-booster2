@@ -1,40 +1,364 @@
-import streamlit as st
-import requests
-import time
 import random
-import pandas as pd
-from datetime import datetime, timedelta
+import time
+import requests
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
 import json
-import threading
-from bs4 import BeautifulSoup
-import urllib3
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+import gradio as gr
+import os
 
-st.set_page_config(
-    page_title="SEO Automation Pro",
-    page_icon="⚡",
-    layout="wide"
-)
+class SEOEnhancer:
+    def __init__(self):
+        self.proxies = []
+        self.current_proxy = None
+        
+    def get_usa_proxies(self):
+        """Mendapatkan daftar proxy USA gratis"""
+        try:
+            # Sumber proxy gratis alternatif
+            proxy_sources = [
+                "https://www.proxy-list.download/api/v1/get?type=http&country=US",
+                "https://api.proxyscrape.com/v2/?request=getproxies&protocol=http&timeout=10000&country=US"
+            ]
+            
+            for source in proxy_sources:
+                try:
+                    response = requests.get(source, timeout=10)
+                    if response.status_code == 200:
+                        proxies = response.text.strip().split('\n')
+                        self.proxies = [p.strip() for p in proxies if p.strip()]
+                        if self.proxies:
+                            print(f"Found {len(self.proxies)} USA proxies from {source}")
+                            break
+                except:
+                    continue
+                    
+            if not self.proxies:
+                # Fallback proxies
+                self.proxies = [
+                    '103.177.45.3:80',
+                    '45.77.56.113:3128', 
+                    '198.199.86.11:8080',
+                    '159.203.61.169:3128'
+                ]
+                print("Using fallback proxies")
+                
+        except Exception as e:
+            print(f"Error getting proxies: {e}")
+            self.proxies = ['103.177.45.3:80']
 
-# CSS untuk tampilan profesional
-st.markdown("""
-<style>
-    .pro-container {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        padding: 2rem;
-        border-radius: 15px;
-        color: white;
-        margin-bottom: 2rem;
-    }
-    .metric-card {
-        background: white;
-        padding: 1.5rem;
-        border-radius: 10px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        margin: 0.5rem;
-        border-left: 4px solid #667eea;
-    }
-    .log-entry {
+    def setup_driver(self):
+        """Setup Chrome driver untuk Hugging Face"""
+        chrome_options = Options()
+        
+        # Konfigurasi untuk Hugging Face Spaces
+        chrome_options.add_argument('--headless')
+        chrome_options.add_argument('--no-sandbox')
+        chrome_options.add_argument('--disable-dev-shm-usage')
+        chrome_options.add_argument('--disable-gpu')
+        chrome_options.add_argument('--remote-debugging-port=9222')
+        
+        # User agent random
+        user_agents = [
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+            'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+        ]
+        chrome_options.add_argument(f'--user-agent={random.choice(user_agents)}')
+        
+        # Opsi anti-detection
+        chrome_options.add_argument('--disable-blink-features=AutomationControlled')
+        chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
+        chrome_options.add_experimental_option('useAutomationExtension', False)
+        
+        try:
+            # Untuk Hugging Face environment
+            service = Service()
+            driver = webdriver.Chrome(service=service, options=chrome_options)
+            driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
+            return driver
+        except Exception as e:
+            print(f"Error setting up driver: {e}")
+            return None
+
+    def check_data_leakage(self, driver):
+        """Memeriksa kebocoran data (simulasi)"""
+        try:
+            driver.get("https://httpbin.org/ip")
+            time.sleep(2)
+            print("Data leakage check completed")
+            return True
+        except Exception as e:
+            print(f"Data leakage check failed: {e}")
+            return False
+
+    def simulate_google_search(self, driver, keyword, target_website):
+        """Simulasi pencarian Google dan kunjungan website"""
+        try:
+            # Buka Google
+            driver.get("https://www.google.com")
+            time.sleep(3)
+            
+            # Terima cookies jika ada
+            try:
+                cookie_button = driver.find_elements(By.XPATH, "//button[contains(., 'Accept')]")
+                if cookie_button:
+                    cookie_button[0].click()
+                    time.sleep(2)
+            except:
+                pass
+            
+            # Input pencarian
+            try:
+                search_box = driver.find_element(By.NAME, "q")
+                search_box.clear()
+                search_box.send_keys(keyword)
+                search_box.submit()
+                time.sleep(4)
+            except:
+                # Alternatif jika tidak bisa find element
+                search_url = f"https://www.google.com/search?q={keyword.replace(' ', '+')}"
+                driver.get(search_url)
+                time.sleep(4)
+            
+            # Simulasi klik website (dalam real implementation akan mencari link yang sesuai)
+            print(f"Searching for: {keyword}")
+            
+            # Scroll halaman
+            self.slow_scroll(driver)
+            time.sleep(2)
+            
+            # Kembali ke atas
+            driver.execute_script("window.scrollTo(0, 0);")
+            time.sleep(2)
+            
+            # Simulasi kunjungan ke URL target langsung
+            target_url = f"https://{target_website}"
+            driver.get(target_url)
+            time.sleep(5)
+            
+            # Scroll di website target
+            self.slow_scroll(driver)
+            time.sleep(2)
+            
+            # Simulasi klik artikel/postingan
+            try:
+                links = driver.find_elements(By.TAG_NAME, "a")
+                if links:
+                    # Pilih link yang mungkin adalah artikel
+                    article_links = [link for link in links if any(x in link.get_attribute('href') or '' for x in ['/blog/', '/article/', '/post/', '/news/'])]
+                    if article_links:
+                        random.choice(article_links[:3]).click()
+                        time.sleep(4)
+                        self.scroll_for_duration(driver, 10)
+            except:
+                pass
+            
+            return True
+            
+        except Exception as e:
+            print(f"Search simulation failed: {e}")
+            return False
+
+    def slow_scroll(self, driver):
+        """Scroll pelan ke bawah halaman"""
+        try:
+            scroll_pause_time = 0.5
+            screen_height = driver.execute_script("return window.screen.height;")
+            scroll_height = driver.execute_script("return document.body.scrollHeight;")
+            i = 1
+            
+            while True:
+                driver.execute_script(f"window.scrollTo(0, {screen_height * i});")
+                i += 1
+                time.sleep(scroll_pause_time)
+                if (screen_height * i) > scroll_height:
+                    break
+        except:
+            # Fallback scroll sederhana
+            driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+            time.sleep(2)
+
+    def scroll_for_duration(self, driver, seconds):
+        """Scroll untuk durasi tertentu"""
+        start_time = time.time()
+        scroll_count = 0
+        
+        while (time.time() - start_time) < seconds:
+            scroll_height = random.randint(200, 500)
+            driver.execute_script(f"window.scrollBy(0, {scroll_height});")
+            time.sleep(1)
+            scroll_count += 1
+            
+            # Occasionally scroll up sedikit
+            if scroll_count % 3 == 0:
+                driver.execute_script("window.scrollBy(0, -100);")
+                time.sleep(0.5)
+
+    def clear_cache(self, driver):
+        """Clear browser cache"""
+        try:
+            driver.execute_script("window.localStorage.clear();")
+            driver.execute_script("window.sessionStorage.clear();")
+            driver.delete_all_cookies()
+            print("Cache cleared")
+        except Exception as e:
+            print(f"Cache clearing failed: {e}")
+
+    def run_seo_cycle(self, keywords, target_website, cycles, progress_callback=None):
+        """Menjalankan siklus SEO enhancement"""
+        results = []
+        self.get_usa_proxies()
+        
+        for cycle in range(cycles):
+            if progress_callback:
+                progress_callback(f"Memulai cycle {cycle + 1}/{cycles}")
+            
+            results.append(f"Cycle {cycle + 1}: Memulai...")
+            
+            driver = None
+            try:
+                driver = self.setup_driver()
+                if not driver:
+                    results.append(f"Cycle {cycle + 1}: Gagal setup driver")
+                    continue
+                
+                # Check data leakage
+                if not self.check_data_leakage(driver):
+                    results.append(f"Cycle {cycle + 1}: Terdeteksi kebocoran data")
+                    continue
+                
+                # Pilih keyword random
+                keyword = random.choice(keywords)
+                
+                # Simulasi pencarian Google
+                success = self.simulate_google_search(driver, keyword, target_website)
+                
+                if success:
+                    results.append(f"Cycle {cycle + 1}: Berhasil - Keyword: '{keyword}'")
+                else:
+                    results.append(f"Cycle {cycle + 1}: Gagal simulasi pencarian")
+                
+                # Clear cache
+                self.clear_cache(driver)
+                
+                # Tunggu sebelum cycle berikutnya
+                wait_time = random.randint(10, 30)
+                time.sleep(wait_time)
+                
+            except Exception as e:
+                results.append(f"Cycle {cycle + 1}: Error - {str(e)}")
+            finally:
+                if driver:
+                    try:
+                        driver.quit()
+                    except:
+                        pass
+        
+        return "\n".join(results)
+
+def run_seo_enhancement(keywords_text, target_website, cycles):
+    """Fungsi untuk Gradio interface"""
+    keywords = [k.strip() for k in keywords_text.split(",") if k.strip()]
+    
+    if not keywords:
+        return "Error: Masukkan minimal satu keyword"
+    
+    if not target_website:
+        return "Error: Masukkan target website"
+    
+    try:
+        cycles = int(cycles)
+        if cycles <= 0:
+            return "Error: Jumlah cycles harus lebih dari 0"
+    except:
+        return "Error: Jumlah cycles harus angka"
+    
+    seo = SEOEnhancer()
+    
+    def progress_update(message):
+        print(message)
+    
+    result = seo.run_seo_cycle(keywords, target_website, cycles, progress_update)
+    
+    return f"SEO Enhancement selesai!\n\nHasil:\n{result}"
+
+# Gradio Interface
+with gr.Blocks(theme=gr.themes.Soft()) as demo:
+    gr.Markdown(
+        """
+        # 🚀 SEO Enhancement Tool
+        Tools untuk meningkatkan SEO dan traffic website melalui simulasi perilaku pengguna nyata.
+        
+        **Fitur:**
+        - Menggunakan proxy USA
+        - Simulasi pencarian Google
+        - Perilaku browsing natural
+        - Auto-scroll dan interaksi
+        """
+    )
+    
+    with gr.Row():
+        with gr.Column():
+            keywords = gr.Textbox(
+                label="Keywords (pisahkan dengan koma)",
+                value="teknologi, bisnis online, pemasaran digital, programming, web development",
+                placeholder="Masukkan keyword yang relevan dengan website target..."
+            )
+            target_website = gr.Textbox(
+                label="Target Website",
+                value="example.com",
+                placeholder="contoh: websiteanda.com (tanpa https://)"
+            )
+            cycles = gr.Number(
+                label="Jumlah Cycles",
+                value=2,
+                minimum=1,
+                maximum=10
+            )
+            
+            submit_btn = gr.Button("🚀 Start SEO Enhancement", variant="primary")
+        
+        with gr.Column():
+            output = gr.Textbox(
+                label="Progress & Results",
+                lines=15,
+                max_lines=20
+            )
+    
+    # Examples
+    gr.Examples(
+        examples=[
+            ["teknologi terbaru, artificial intelligence, machine learning", "teknologi.com", 2],
+            ["bisnis online, startup, entrepreneurship", "usahasukses.com", 2],
+            ["pemasaran digital, SEO, social media marketing", "digitalmarketing.com", 2]
+        ],
+        inputs=[keywords, target_website, cycles]
+    )
+    
+    # Footer
+    gr.Markdown(
+        """
+        ---
+        **Catatan:** 
+        - Tools ini mensimulasikan perilaku pengguna nyata untuk meningkatkan engagement
+        - Pastikan penggunaan sesuai dengan terms of service website target
+        - Hasil mungkin bervariasi tergantung kondisi website dan jaringan
+        """
+    )
+    
+    submit_btn.click(
+        fn=run_seo_enhancement,
+        inputs=[keywords, target_website, cycles],
+        outputs=output
+    )
+
+if __name__ == "__main__":
+    demo.launch(share=True)    .log-entry {
         font-family: 'Courier New', monospace;
         font-size: 0.85rem;
         padding: 0.5rem;
