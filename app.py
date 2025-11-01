@@ -408,7 +408,7 @@ def main():
         st.rerun()
 
 if __name__ == "__main__":
-    main()    }
+    main()    
     .warning-box {
         background-color: #fff3cd;
         border: 1px solid #ffeaa7;
