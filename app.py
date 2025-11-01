@@ -807,7 +807,7 @@ st.markdown("""
     }
     .warning-box {
         background-color: #fff3cd;
-        border: 1px solid #ffeaa7;
+        border: 1 solid #ffeaa7;
         border-radius: 5;
         padding: 1;
         margin: 1 0;
