@@ -1289,16 +1289,16 @@ if __name__ == "__main__":
 st.markdown("""
 <style>
     .main-header {
-        font-size: 2.5rem;
+        font-size: 2.5;
         color: #1f77b4;
         text-align: center;
-        margin-bottom: 2rem;
+        margin-bottom: 2;
     }
     .metric-card {
         background-color: #f0f2f6;
-        padding: 1rem;
-        border-radius: 10px;
-        margin: 0.5rem 0;
+        padding: 1;
+        border-radius: 10;
+        margin: 0.5 0;
     }
     .status-running {
         color: #28a745;
@@ -1310,10 +1310,10 @@ st.markdown("""
     }
     .warning-box {
         background-color: #fff3cd;
-        border: 1px solid #ffeaa7;
-        border-radius: 5px;
-        padding: 1rem;
-        margin: 1rem 0;
+        border: 1 solid #ffeaa7;
+        border-radius: 5;
+        padding: 1;
+        margin: 1 0;
     }
 </style>
 """, unsafe_allow_html=True)
