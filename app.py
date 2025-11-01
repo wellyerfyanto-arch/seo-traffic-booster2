@@ -793,9 +793,9 @@ st.markdown("""
     }
     .metric-card {
         background-color: #f0f2f6;
-        padding: 1rem;
+        padding: 1;
         border-radius: 10px;
-        margin: 0.5rem 0;
+        margin: 0.5 0;
     }
     .status-running {
         color: #28a745;
@@ -809,8 +809,8 @@ st.markdown("""
         background-color: #fff3cd;
         border: 1px solid #ffeaa7;
         border-radius: 5px;
-        padding: 1rem;
-        margin: 1rem 0;
+        padding: 1;
+        margin: 1 0;
     }
 </style>
 """, unsafe_allow_html=True)
