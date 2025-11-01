@@ -1886,7 +1886,7 @@ if __name__ == "__main__":
         st.rerun()
 
 if __name__ == "__main__":
-    main()p']}` - {log['message']}")
+    main()p']}` - ("{log['message']}")
         else:
             st.info("Belum ada aktivitas yang tercatat")
 
