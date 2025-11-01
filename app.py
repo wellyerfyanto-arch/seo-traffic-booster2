@@ -454,7 +454,7 @@ class SEOBot:
         }
     
     def check_data_leak(self, email):
-        """Simulasi cek kebocoran data"""
+        "Simulasi cek kebocoran data"""
         try:
             # Simulasi cek kebocoran data
             leak_indicators = ['password', 'username', 'email', 'phone']
@@ -479,7 +479,7 @@ class SEOBot:
             return {'has_leak': False, 'error': str(e)}
     
     def simulate_traffic_cycle(self, config):
-        """Simulasi siklus traffic boosting"""
+        "Simulasi siklus traffic boosting"""
         try:
             # Simulasi delay
             time.sleep(2)
