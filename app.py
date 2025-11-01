@@ -733,38 +733,9 @@ def main():
 
 if __name__ == "__main__":
     main()    
-# CSS kustom
-st.markdown("""
-<style>
-    .main-header {
-        font-size: 2.5;
-        color: #1f77b4;
-        text-align: center;
-        margin-bottom: 2;
-    }
-    .metric-card {
-        background-color: #f0f2f6;
-        padding: 1;
-        border-radius: 10;
-        margin: 0.5 0;
-    }
-    .status-running {
-        color: #28a745;
-        font-weight: bold;
-    }
-    .status-stopped {
-        color: #dc3545;
-        font-weight: bold;
-    }
-    .warning-box {
-        background-color: #fff3cd;
-        border: 1 solid #ffeaa7;
-        border-radius: 5;
-        padding: 1;
-        margin: 1 0;
-    }
-</style>
-""", unsafe_allow_html=True)
+
+
+
 
 class SEOBot:
     def __init__(self):
