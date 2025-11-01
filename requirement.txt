@@ -1,5 +1,6 @@
-streamlit==1.28.0
+selenium==4.15.0
 requests==2.31.0
-pandas==2.0.3
+gradio==4.12.0
 beautifulsoup4==4.12.2
-urllib3==1.26.16
+webdriver-manager==4.0.1
+fake-useragent==1.4.0
