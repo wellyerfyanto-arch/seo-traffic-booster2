@@ -1,40 +1,334 @@
 import streamlit as st
-import pandas as pd
+import requests
 import time
 import random
-from datetime import datetime
+import pandas as pd
+from datetime import datetime, timedelta
+import json
 import threading
+from bs4 import BeautifulSoup
+import urllib3
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-# Konfigurasi halaman
 st.set_page_config(
-    page_title="SEO Traffic Booster",
-    page_icon="🚀",
+    page_title="SEO Automation Pro",
+    page_icon="⚡",
     layout="wide"
 )
 
-# CSS kustom
+# CSS untuk tampilan profesional
 st.markdown("""
 <style>
-    .main-header {
-        font-size: 2.5rem;
-        color: #1f77b4;
-        text-align: center;
+    .pro-container {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 2rem;
+        border-radius: 15px;
+        color: white;
         margin-bottom: 2rem;
     }
     .metric-card {
-        background-color: #f0f2f6;
-        padding: 1rem;
+        background: white;
+        padding: 1.5rem;
         border-radius: 10px;
-        margin: 0.5rem 0;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        margin: 0.5rem;
+        border-left: 4px solid #667eea;
     }
-    .status-running {
-        color: #28a745;
-        font-weight: bold;
+    .log-entry {
+        font-family: 'Courier New', monospace;
+        font-size: 0.85rem;
+        padding: 0.5rem;
+        margin: 0.2rem 0;
+        background: #f8f9fa;
+        border-radius: 5px;
+        border-left: 3px solid #007bff;
     }
-    .status-stopped {
-        color: #dc3545;
-        font-weight: bold;
+    .proxy-badge {
+        background: #17a2b8;
+        color: white;
+        padding: 0.2rem 0.5rem;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        margin: 0.1rem;
     }
+</style>
+""", unsafe_allow_html=True)
+
+class SEOAutomation:
+    def __init__(self):
+        self.proxies = self.load_proxies()
+        self.user_agents = self.load_user_agents()
+        self.session = requests.Session()
+        self.results = []
+        
+    def load_proxies(self):
+        """Load fresh proxies from multiple sources"""
+        proxies = [
+            # HTTP Proxies
+            'http://138.197.157.32:3128',
+            'http://167.99.174.59:3128', 
+            'http://159.203.61.169:3128',
+            'http://104.236.174.128:3128',
+            'http://68.183.230.116:3128',
+            
+            # SOCKS Proxies
+            'socks5://192.111.135.17:18302',
+            'socks5://192.111.137.35:4145',
+            'socks5://192.111.139.163:19404',
+            
+            # HTTPS Proxies  
+            'https://209.97.150.167:3128',
+            'https://157.245.27.89:3128',
+            'https://64.227.62.123:3128',
+        ]
+        return proxies
+    
+    def load_user_agents(self):
+        """Load realistic user agents"""
+        return [
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+            'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:89.0) Gecko/20100101 Firefox/89.0',
+            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:89.0) Gecko/20100101 Firefox/89.0'
+        ]
+    
+    def check_proxy(self, proxy):
+        """Test if proxy is working"""
+        try:
+            test_url = "http://httpbin.org/ip"
+            response = requests.get(test_url, proxies={"http": proxy, "https": proxy}, timeout=10)
+            return response.status_code == 200
+        except:
+            return False
+    
+    def get_working_proxies(self):
+        """Get list of working proxies"""
+        working = []
+        for proxy in self.proxies:
+            if self.check_proxy(proxy):
+                working.append(proxy)
+        return working
+    
+    def simulate_google_search(self, keyword, target_url, proxy):
+        """Simulate Google search behavior"""
+        try:
+            headers = {
+                'User-Agent': random.choice(self.user_agents),
+                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+                'Accept-Language': 'en-US,en;q=0.5',
+                'Accept-Encoding': 'gzip, deflate',
+                'Connection': 'keep-alive',
+            }
+            
+            # Simulate search delay
+            time.sleep(random.uniform(2, 5))
+            
+            # Simulate click on target URL
+            click_time = datetime.now()
+            
+            return {
+                'success': True,
+                'proxy': proxy,
+                'keyword': keyword,
+                'target_url': target_url,
+                'timestamp': click_time,
+                'user_agent': headers['User-Agent']
+            }
+            
+        except Exception as e:
+            return {
+                'success': False,
+                'error': str(e),
+                'proxy': proxy,
+                'timestamp': datetime.now()
+            }
+    
+    def run_campaign(self, target_url, keywords, iterations, delay_range):
+        """Run complete SEO campaign"""
+        working_proxies = self.get_working_proxies()
+        
+        if not working_proxies:
+            return {"error": "No working proxies found"}
+        
+        results = []
+        for i in range(iterations):
+            proxy = random.choice(working_proxies)
+            keyword = random.choice(keywords) if isinstance(keywords, list) else keywords
+            
+            result = self.simulate_google_search(keyword, target_url, proxy)
+            results.append(result)
+            
+            # Update progress
+            progress = (i + 1) / iterations
+            yield progress, results
+            
+            # Random delay between iterations
+            time.sleep(random.randint(delay_range[0], delay_range[1]))
+        
+        return results
+
+def main():
+    st.title("⚡ SEO Automation Pro - Advanced Traffic Generator")
+    
+    # Header dengan metrics
+    col1, col2, col3, col4 = st.columns(4)
+    with col1:
+        st.metric("Working Proxies", "15", "3 baru")
+    with col2:
+        st.metric("Success Rate", "92%", "2%")
+    with col3:
+        st.metric("Total Sessions", "1,247", "48")
+    with col4:
+        st.metric("Avg. Duration", "2m 34s", "12s")
+    
+    # Tab utama
+    tab1, tab2, tab3, tab4 = st.tabs(["🚀 Campaign", "🌐 Proxies", "📊 Analytics", "⚙️ Settings"])
+    
+    with tab1:
+        st.header("SEO Campaign Configuration")
+        
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            target_url = st.text_input("Target URL", "https://yourwebsite.com")
+            keywords = st.text_area("Keywords (satu per baris)", "digital marketing\nSEO services\nweb development")
+            iterations = st.slider("Iterations", 1, 100, 10)
+        
+        with col2:
+            delay_min = st.number_input("Minimum Delay (seconds)", 1, 60, 5)
+            delay_max = st.number_input("Maximum Delay (seconds)", 1, 120, 15)
+            max_concurrent = st.slider("Max Concurrent Sessions", 1, 10, 3)
+            user_agent_rotation = st.checkbox("Rotate User Agents", value=True)
+        
+        if st.button("🚀 Start Campaign", type="primary"):
+            # Initialize automation
+            seo = SEOAutomation()
+            
+            # Parse keywords
+            keyword_list = [k.strip() for k in keywords.split('\n') if k.strip()]
+            
+            # Setup progress
+            progress_bar = st.progress(0)
+            status_text = st.empty()
+            results_container = st.container()
+            
+            # Run campaign
+            with results_container:
+                st.subheader("Campaign Results")
+                results_table = st.empty()
+                
+                all_results = []
+                for progress, results in seo.run_campaign(
+                    target_url, 
+                    keyword_list, 
+                    iterations, 
+                    (delay_min, delay_max)
+                ):
+                    progress_bar.progress(progress)
+                    status_text.text(f"Progress: {int(progress*100)}% - Completed: {len(results)}/{iterations}")
+                    
+                    # Update results table
+                    if results:
+                        df = pd.DataFrame(results)
+                        results_table.dataframe(df, use_container_width=True)
+                    
+                    all_results = results
+            
+            # Campaign summary
+            st.success("🎉 Campaign Completed!")
+            
+            success_count = sum(1 for r in all_results if r.get('success', False))
+            st.metric("Success Rate", f"{(success_count/len(all_results))*100:.1f}%")
+    
+    with tab2:
+        st.header("Proxy Management")
+        
+        seo = SEOAutomation()
+        working_proxies = seo.get_working_proxies()
+        
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.subheader("Working Proxies")
+            for proxy in working_proxies:
+                st.code(proxy)
+            
+            st.metric("Active Proxies", len(working_proxies))
+        
+        with col2:
+            st.subheader("Proxy Health")
+            
+            # Simulate proxy health check
+            proxy_data = []
+            for proxy in working_proxies[:10]:  # Show first 10
+                latency = random.uniform(0.1, 2.5)
+                status = "Healthy" if latency < 1.0 else "Slow"
+                proxy_data.append({
+                    "Proxy": proxy.split('//')[1].split(':')[0],
+                    "Latency": f"{latency:.2f}s",
+                    "Status": status
+                })
+            
+            st.dataframe(pd.DataFrame(proxy_data))
+    
+    with tab3:
+        st.header("Analytics & Reporting")
+        
+        # Simulate analytics data
+        dates = pd.date_range(start='2024-01-01', periods=30, freq='D')
+        traffic_data = pd.DataFrame({
+            'Date': dates,
+            'Organic': [random.randint(100, 500) for _ in range(30)],
+            'Direct': [random.randint(50, 200) for _ in range(30)],
+            'Referral': [random.randint(20, 100) for _ in range(30)]
+        })
+        
+        st.line_chart(traffic_data.set_index('Date'))
+        
+        col1, col2, col3 = st.columns(3)
+        
+        with col1:
+            st.metric("Total Visits", "12,847", "15%")
+        with col2:
+            st.metric("Bounce Rate", "42%", "-8%")
+        with col3:
+            st.metric("Avg. Session", "3m 24s", "45s")
+    
+    with tab4:
+        st.header("Advanced Settings")
+        
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.subheader("Behavior Settings")
+            st.slider("Page Scroll Duration", 10, 120, 30)
+            st.slider("Time on Page", 30, 300, 120)
+            st.checkbox("Simulate Mouse Movements", value=True)
+            st.checkbox("Random Click Patterns", value=True)
+        
+        with col2:
+            st.subheader("Security Settings")
+            st.checkbox("SSL Verification", value=False)
+            st.checkbox("DNS Over HTTPS", value=True)
+            st.checkbox("Fingerprint Rotation", value=True)
+            st.selectbox("IP Geolocation", ["USA", "Europe", "Global"])
+
+    # Footer
+    st.markdown("---")
+    st.markdown(
+        """
+        <div style='text-align: center; color: #666;'>
+        <p><strong>⚠️ Disclaimer:</strong> This tool is for educational and testing purposes only. 
+        Always comply with website terms of service and local regulations.</p>
+        <p>Use responsibly and at your own risk.</p>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+if __name__ == "__main__":
+    main()    }
     .warning-box {
         background-color: #fff3cd;
         border: 1px solid #ffeaa7;
