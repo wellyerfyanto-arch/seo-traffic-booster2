@@ -412,7 +412,7 @@ if __name__ == "__main__":
     .warning-box {
         background-color: #fff3cd;
         border-radius: 5;
-        padding: 1rem;
+        padding: 1;
         margin: 1rem 0;
     }
 </style>
