@@ -408,7 +408,7 @@ def main():
         st.rerun()
 
 if __name__ == "__main__":
-    main()    }
+    main()    
     .status-stopped {
         color: #dc3545;
         font-weight: bold;
