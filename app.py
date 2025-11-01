@@ -666,43 +666,6 @@ def main():
     with tab5:
         st.subheader("📖 Panduan Penggunaan")
         
-        st.markdown("""
-        ### Cara Menggunakan SEO Traffic Booster:
-        
-        1. **Konfigurasi Dasar**:
-           - Masukkan kata kunci target untuk pencarian
-           - Masukkan domain website target
-           - Atur jumlah siklus dan delay
-        
-        2. **Fitur Keamanan**:
-           - Gunakan proxy server untuk anonimitas
-           - Cek kebocoran data email
-           - Monitor semua aktivitas
-        
-        3. **Jalankan Simulasi**:
-           - Klik "Mulai Simulasi" untuk memulai
-           - Monitor progress di dashboard
-           - Lihat analytics secara real-time
-        
-        4. **Fitur yang Tersedia**:
-           -  Simulasi traffic organik
-           -  Cek kebocoran data
-           -  Monitoring real-time
-           -  Analytics lengkap
-           -  Log aktivitas detail
-        
-        ### Catatan untuk Streamlit Share:
-        - Beberapa fitur automation browser tidak tersedia
-        - Aplikasi berjalan dalam mode simulasi
-        - Data bersifat sementara (akan reset setelah redeploy)
-        
-        ### Metrik yang Dimonitor:
-        - Total kunjungan website
-        - Kata kunci yang digunakan
-        - Success rate traffic
-        - Sumber traffic
-        - Aktivitas pengguna
-        """)
 
     # Logika kontrol bot
     if start_btn and not st.session_state.bot.is_running:
