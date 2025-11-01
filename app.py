@@ -741,11 +741,11 @@ def main():
            - Lihat analytics secara real-time
         
         4. **Fitur yang Tersedia**:
-           - ✅ Simulasi traffic organik
-           - ✅ Cek kebocoran data
-           - ✅ Monitoring real-time
-           - ✅ Analytics lengkap
-           - ✅ Log aktivitas detail
+           - Simulasi traffic organik
+           - Cek kebocoran data
+           - Monitoring real-time
+           - Analytics lengkap
+           - Log aktivitas detail
         
         ### Catatan untuk Streamlit Share:
         - Beberapa fitur automation browser tidak tersedia
