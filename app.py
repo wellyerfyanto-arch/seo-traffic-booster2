@@ -413,7 +413,7 @@ if __name__ == "__main__":
         background-color: #fff3cd;
         border-radius: 5;
         padding: 1;
-        margin: 1rem 0;
+        margin: 1 0;
     }
 </style>
 """, unsafe_allow_html=True)
