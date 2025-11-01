@@ -1706,7 +1706,7 @@ def main():
         st.rerun()
 
 if __name__ == "__main__":
-    main()"**Waktu:** {result.get('timestamp', 'Unknown')}")
+    main()"**Waktu:** {result.get('timestamp', 'Unknown')}"
         else:
             st.info("Masukkan email dan klik 'Cek Kebocoran Data' untuk memulai")
 
