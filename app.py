@@ -722,7 +722,7 @@ def main():
     with tab5:
         st.subheader("📖 Panduan Penggunaan")
         
-        st.markdown("""
+        st.markdown("
         ### Cara Menggunakan SEO Traffic Booster:
         
         1. **Konfigurasi Dasar**:
@@ -758,7 +758,7 @@ def main():
         - Success rate traffic
         - Sumber traffic
         - Aktivitas pengguna
-        """)
+        ")
 
     # Logika kontrol bot
     if start_btn and not st.session_state.bot.is_running:
