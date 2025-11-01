@@ -415,7 +415,6 @@ if __name__ == "__main__":
         padding: 1;
         margin: 1 0;
     }
-</style>
 """, unsafe_allow_html=True)
 
 class SEOBot:
