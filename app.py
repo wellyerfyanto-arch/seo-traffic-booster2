@@ -786,10 +786,10 @@ if __name__ == "__main__":
 st.markdown("""
 <style>
     .main-header {
-        font-size: 2.5rem;
+        font-size: 2.5;
         color: #1f77b4;
         text-align: center;
-        margin-bottom: 2rem;
+        margin-bottom: 2;
     }
     .metric-card {
         background-color: #f0f2f6;
