@@ -1374,12 +1374,12 @@ def main():
     st.markdown('<h1 class="main-header">🚀 SEO Traffic Booster</h1>', unsafe_allow_html=True)
     
     # Warning box
-    st.markdown("
+    st.markdown("""
     <div class="warning-box">
         <strong> Disclaimer:</strong> Aplikasi ini adalah simulator untuk tujuan edukasi. 
         Beberapa fitur seperti automation browser tidak tersedia di Streamlit Share karena batasan keamanan.
     </div>
-    , unsafe_allow_html=True")
+    """, unsafe_allow_html=True)
     
     # Inisialisasi session state
     if 'bot' not in st.session_state:
