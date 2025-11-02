@@ -1,40 +1,263 @@
-import random
 import time
-import requests
+import random
+import threading
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.chrome.service import Service
-import json
-import gradio as gr
-import os
+from fake_useragent import UserAgent
+import requests
+from flask import Flask, render_template, request
+from flask_socketio import SocketIO, emit
+import eventlet
 
-class SEOEnhancer:
+app = Flask(__name__)
+app.config['SECRET_KEY'] = 'your_secret_key_here'
+socketio = SocketIO(app, async_mode='eventlet')
+
+class SEOTrafficBooster:
     def __init__(self):
+        self.ua = UserAgent()
         self.proxies = []
-        self.current_proxy = None
+        self.is_running = False
+        self.current_status = "Ready"
+        self.current_cycle = 0
+        self.total_cycles = 0
         
-    def get_usa_proxies(self):
-        """Mendapatkan daftar proxy USA gratis"""
-        try:
-            # Sumber proxy gratis alternatif
-            proxy_sources = [
-                "https://www.proxy-list.download/api/v1/get?type=http&country=US",
-                "https://api.proxyscrape.com/v2/?request=getproxies&protocol=http&timeout=10000&country=US"
+    def get_auto_proxies(self):
+        """Get proxies automatically from free sources"""
+        all_proxies = []
+        
+        # Simple proxy sources
+        api_sources = [
+            'https://www.proxy-list.download/api/v1/get?type=http',
+            'https://raw.githubusercontent.com/TheSpeedX/PROXY-List/master/http.txt'
+        ]
+        
+        for api_url in api_sources:
+            try:
+                response = requests.get(api_url, timeout=10)
+                if response.status_code == 200:
+                    lines = response.text.split('\n')
+                    for line in lines:
+                        line = line.strip()
+                        if line and ':' in line:
+                            all_proxies.append(line)
+                    self.update_status(f"Found {len(lines)} proxies from source")
+            except Exception as e:
+                self.update_status(f"Proxy source error: {str(e)}")
+                continue
+        
+        # Fallback proxies
+        if not all_proxies:
+            all_proxies = [
+                "34.82.224.175:3128",
+                "35.185.196.38:3128", 
+                "104.154.143.77:3128"
             ]
+        
+        return list(set(all_proxies))[:20]
+
+    def setup_driver(self):
+        """Setup Chrome driver with configuration"""
+        chrome_options = Options()
+        
+        # Random User Agent
+        user_agent = self.ua.random
+        chrome_options.add_argument(f'--user-agent={user_agent}')
+        
+        # Proxy settings
+        if not self.proxies:
+            self.proxies = self.get_auto_proxies()
+        
+        if self.proxies:
+            proxy = random.choice(self.proxies)
+            chrome_options.add_argument(f'--proxy-server=http://{proxy}')
+            self.update_status(f"Using proxy: {proxy}")
+        
+        # Chrome options
+        chrome_options.add_argument('--headless')
+        chrome_options.add_argument('--no-sandbox')
+        chrome_options.add_argument('--disable-dev-shm-usage')
+        chrome_options.add_argument('--disable-blink-features=AutomationControlled')
+        chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
+        chrome_options.add_experimental_option('useAutomationExtension', False)
+        
+        try:
+            driver = webdriver.Chrome(options=chrome_options)
+            driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
+            return driver
+        except Exception as e:
+            self.update_status(f"Driver setup error: {str(e)}")
+            return None
+    
+    def update_status(self, message):
+        """Update status and send to UI"""
+        self.current_status = message
+        timestamp = time.strftime("%H:%M:%S")
+        socketio.emit('status_update', {
+            'message': f"[{timestamp}] {message}",
+            'cycle': self.current_cycle,
+            'total_cycles': self.total_cycles
+        })
+        print(f"[{timestamp}] {message}")
+    
+    def simulate_visit(self, driver, keyword, target_website):
+        """Simulate human visit behavior"""
+        try:
+            # Google Search
+            self.update_status("Starting Google search")
+            driver.get("https://www.google.com")
+            time.sleep(2)
             
-            for source in proxy_sources:
+            search_box = WebDriverWait(driver, 10).until(
+                EC.presence_of_element_located((By.NAME, "q"))
+            )
+            
+            # Type keyword
+            self.update_status(f"Searching for: {keyword}")
+            for char in keyword:
+                search_box.send_keys(char)
+                time.sleep(0.1)
+            
+            search_box.submit()
+            time.sleep(3)
+            
+            # Find and click target website
+            self.update_status(f"Looking for: {target_website}")
+            target_links = driver.find_elements(By.XPATH, f"//a[contains(@href, '{target_website}')]")
+            
+            if target_links:
+                target_links[0].click()
+                self.update_status("Clicked target website")
+                time.sleep(3)
+                
+                # Scroll behavior
+                self.update_status("Scrolling page")
+                self.slow_scroll(driver)
+                
+                # Find and click article
+                links = driver.find_elements(By.TAG_NAME, "a")
+                if links:
+                    try:
+                        random.choice(links).click()
+                        self.update_status("Clicked random link")
+                        time.sleep(3)
+                        self.slow_scroll(driver)
+                    except:
+                        pass
+                
+                return True
+            else:
+                self.update_status("Target website not found")
+                return False
+                
+        except Exception as e:
+            self.update_status(f"Visit simulation error: {str(e)}")
+            return False
+    
+    def slow_scroll(self, driver):
+        """Slow scroll like human"""
+        total_height = driver.execute_script("return document.body.scrollHeight")
+        for i in range(0, total_height, 100):
+            driver.execute_script(f"window.scrollTo(0, {i});")
+            time.sleep(0.2)
+    
+    def run_cycles(self, keywords, target_website, cycles, delay_between):
+        """Run all cycles"""
+        self.is_running = True
+        self.total_cycles = cycles
+        
+        for cycle in range(cycles):
+            if not self.is_running:
+                break
+                
+            self.current_cycle = cycle + 1
+            self.update_status(f"Starting cycle {self.current_cycle}/{cycles}")
+            
+            driver = self.setup_driver()
+            if not driver:
+                self.update_status("Failed to setup driver")
+                continue
+            
+            try:
+                # Test IP
+                driver.get("https://httpbin.org/ip")
+                time.sleep(2)
+                
+                # Run simulation
+                keyword = random.choice(keywords)
+                success = self.simulate_visit(driver, keyword, target_website)
+                
+                if success:
+                    self.update_status(f"Cycle {self.current_cycle} completed")
+                else:
+                    self.update_status(f"Cycle {self.current_cycle} had issues")
+                
+            except Exception as e:
+                self.update_status(f"Cycle error: {str(e)}")
+            finally:
                 try:
-                    response = requests.get(source, timeout=10)
-                    if response.status_code == 200:
-                        proxies = response.text.strip().split('\n')
-                        self.proxies = [p.strip() for p in proxies if p.strip()]
-                        if self.proxies:
-                            print(f"Found {len(self.proxies)} USA proxies from {source}")
-                            break
+                    driver.quit()
                 except:
+                    pass
+            
+            # Delay between cycles
+            if cycle < cycles - 1 and self.is_running:
+                self.update_status(f"Waiting {delay_between} seconds")
+                time.sleep(delay_between)
+        
+        self.is_running = False
+        self.update_status("All cycles completed")
+
+# Global instance
+booster = SEOTrafficBooster()
+
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+@socketio.on('connect')
+def handle_connect():
+    emit('status_update', {
+        'message': f"[{time.strftime('%H:%M:%S')}] Connected to SEO Booster",
+        'cycle': booster.current_cycle,
+        'total_cycles': booster.total_cycles
+    })
+
+@socketio.on('start_cycles')
+def handle_start_cycles(data):
+    if booster.is_running:
+        emit('error', {'message': 'Already running!'})
+        return
+    
+    keywords = [k.strip() for k in data['keywords'].split('\n') if k.strip()]
+    target_website = data['website'].strip()
+    cycles = int(data['cycles'])
+    delay = int(data['delay'])
+    
+    if not keywords or not target_website:
+        emit('error', {'message': 'Please provide keywords and website!'})
+        return
+    
+    # Start in thread
+    thread = threading.Thread(
+        target=booster.run_cycles,
+        args=(keywords, target_website, cycles, delay)
+    )
+    thread.daemon = True
+    thread.start()
+    
+    emit('start_success', {'message': 'SEO Booster started!'})
+
+@socketio.on('stop_cycles')
+def handle_stop_cycles():
+    booster.is_running = False
+    emit('stop_success', {'message': 'Stopping...'})
+
+if __name__ == '__main__':
+    socketio.run(app, debug=False, host='0.0.0.0', port=5000)                except:
                     continue
                     
             if not self.proxies:
